@@ -17,7 +17,6 @@ export const useAuthStore = create((set, get) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
@@ -37,7 +36,7 @@ export const useAuthStore = create((set, get) => ({
       get().connectSocket();
     } catch (error) {
       toast.error(error.response.data.message);
-    } finally {
+    } finally {w
       set({ isSigningUp: false });
     }
   },
@@ -68,20 +67,22 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  updateProfile: async (data) => {
-    set({ isUpdatingProfile: true });
-    try {
-      const res = await axiosInstance.put("/auth/update-profile", data);
-      set({ authUser: res.data });
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      console.log("error in update profile:", error);
+//Profile picture update funtion
+updateProfile : async (data) => {
+  set({isUpdatingProfile : true});
+  try {
+      const res = await axiosInstance.put("/auth/update-profile", data ,{
+          withCredentials : true,
+      });
+      set({authUser : res.data});
+      toast.success("Profile Update Successfully")
+  } catch (error) {
+      console.log("Error in  update profile", error);
       toast.error(error.response.data.message);
-    } finally {
-      set({ isUpdatingProfile: false });
-    }
+  } finally{
+      set({isUpdatingProfile : false})
+  }
   },
-
   connectSocket: () => {
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
